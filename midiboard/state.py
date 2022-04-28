@@ -3,10 +3,10 @@ class State:
         self.on = True
         self._pressed_keys = []
         self.octave = 0
-        
+
     def add_pressed_key(self, key):
         self._pressed_keys.append(key)
-    
+
     def remove_pressed_key(self, key):
         try:
             self._pressed_keys.remove(key)
