@@ -1,7 +1,5 @@
-import re
 import time
 
-from pynput.keyboard import Key, Controller
 from pynput import keyboard
 import mido
 
@@ -14,6 +12,7 @@ class Application:
     def __init__(self):
         self.state = State()
         self.outport = mido.open_output('IAC Driver Virtual cable')
+        self.keyboard_listener = None
     
     def toggle_enable(self):
         self.state.on = not self.state.on
@@ -23,6 +22,16 @@ class Application:
         return not self.state.on
 
     def run(self):
+        def restart_listener(suppress):
+            if self.keyboard_listener:
+                self.keyboard_listener.stop()
+            self.keyboard_listener = keyboard.Listener(
+                suppress=suppress,
+                on_press=on_press,
+                on_release=on_release
+            )
+            self.keyboard_listener.start()
+        
         def on_release(key):
             if self.disabled():
                 return
@@ -44,6 +53,7 @@ class Application:
         def on_press(key):
             if key == keyboard.Key.esc:
                 self.toggle_enable()
+                restart_listener(suppress=not self.disabled())
             if self.disabled():
                 return
             print(f'{key} pressed')
@@ -82,34 +92,9 @@ class Application:
             #     # Stop listener
             #     return False
 
-        def darwin_intercept(event_type, event):
-            import Quartz
-            length, chars = Quartz.CGEventKeyboardGetUnicodeString(event, 100, None, None)
-            if length <= 0:
-                return event
-            print(f'darwin chars: =={chars}==')
-            # Block every key except several special keys: (ESC, Space)
-            if chars not in ['\x1b', ' ']:
-                if self.disabled():
-                    return event
-                return None
-            # elif length > 0 and chars == 'a':
-            #     # Transform a to b
-            #     Quartz.CGEventKeyboardSetUnicodeString(event, 1, 'b')
-            else:
-                return event
-
-        # Collect events until released
-        ll = keyboard.Listener(
-            darwin_intercept=darwin_intercept,
-            suppress=True,
-            on_press=on_press,
-            on_release=on_release
-        )
-        print(f'Is App trusted? Answer: {ll.IS_TRUSTED}')
+        restart_listener(True)
+        print(f'Is App trusted? Answer: {self.keyboard_listener.IS_TRUSTED}')
         print('Started listening.')
-        with ll as listener:
-            listener.join()
-        # # ...or, in a non-blocking fashion:
-        # listener = keyboard.Listener(on_press=on_press, on_release=on_release)
-        # listener.start()
+        # Main application's loop. Can be a GUI's one
+        while True:
+            time.sleep(0.01)
