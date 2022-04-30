@@ -76,21 +76,6 @@ class Application:
                 self.outport.send(mm)
             except ValueError as e:
                 print(e)
-            # if str(key) == "'a'":
-            #     mm = mido.Message('note_on', note=50, velocity=100, time=6.2)
-            # elif str(key) == "'s'":
-            #     mm = mido.Message('note_on', note=60, velocity=100, time=6.2)
-            # elif str(key) == "'d'":
-            #     mm = mido.Message('note_on', note=70, velocity=100, time=6.2)
-            # elif str(key) == "'f'":
-            #     for _ in range(127):
-            #         mm = mido.Message('control_change', control=2, value=50)
-            #         # time.sleep(0.1)
-            #         self.outport.send(mm)
-            #     return                
-            # if key == keyboard.Key.esc:
-            #     # Stop listener
-            #     return False
 
         restart_listener(True)
         print(f'Is App trusted? Answer: {self.keyboard_listener.IS_TRUSTED}')
