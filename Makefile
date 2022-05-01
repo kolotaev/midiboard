@@ -1,11 +1,10 @@
+VENV_ACTIVATE:=. venv/bin/activate
+
 venv-init:
 	python3 -m venv venv
 
-venv-activate:
-	bash -c "source venv/bin/activate"
+run:
+	$(VENV_ACTIVATE) && python midiboard/main.py
 
-run: venv-activate
-	python midiboard/main.py
-
-deps: venv-activate
-	pip install -r requirements-macos.txt
+deps:
+	$(VENV_ACTIVATE) && pip install -r requirements-macos.txt
