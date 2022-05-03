@@ -43,7 +43,9 @@ class Application:
                 if note is None:
                     return
                 try:
-                    mm = mido.Message('note_off', note=utils.octaved_note(self.state, note), velocity=100, time=6.2)
+                    mm = mido.Message('note_off',
+                                note=utils.octaved_note(self.state, note), 
+                                velocity=utils.rand_velocity(), time=6.2)
                     self.outport.send(mm)
                 except ValueError as e:
                     print(e)
@@ -62,7 +64,7 @@ class Application:
                 self.state.octave += 1
             elif key == keyboard.Key.down:
                 self.state.octave -= 1
-            # Map to notes 
+            # Map to notes
             key_symbol_pressed = str(key)[1:-1]
             if self.state.was_key_pressed(key_symbol_pressed):
                 return
@@ -72,7 +74,7 @@ class Application:
                 return
             octaved_note = utils.octaved_note(self.state, base_note)
             try:
-                mm = mido.Message('note_on', note=octaved_note, velocity=100, time=6.2)
+                mm = mido.Message('note_on', note=octaved_note, velocity=utils.rand_velocity(), time=6.2)
                 self.outport.send(mm)
             except ValueError as e:
                 print(e)
