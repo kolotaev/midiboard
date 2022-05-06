@@ -2,6 +2,8 @@ import time
 
 from pynput import keyboard
 import mido
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 from state import State
 from constants import KEYS_NOTES_MAP
@@ -81,9 +83,64 @@ class Application:
             except ValueError as e:
                 print(e)
 
-        restart_listener(True)
-        print(f'Is App trusted? Answer: {self.keyboard_listener.IS_TRUSTED}')
-        print('Started listening.')
-        # Main application's loop. Can be a GUI's one
+        try:
+            restart_listener(True)
+            # var = False
+            # import threading
+            # def f():
+            #     import time
+            #     counter = 0
+            #     kbl = keyboard.Listener(
+            #         suppress=True,
+            #         on_press=on_press,
+            #         on_release=on_release
+            #     )
+            #     kbl.start()
+            #     while var:
+            #         time.sleep(0.1)
+            #         print("Function {} run!".format(counter))
+            #         counter+=1
+            # t1 = threading.Thread(target=f)
+            # t1.start()
+
+            print(f'Is App trusted? Answer: {self.keyboard_listener.IS_TRUSTED}')
+            print('Started listening.')
+        except Exception as e:
+            print(e)
+
+
+class CliApplication(Application):
+    def run(self):
+        super().run()
         while True:
             time.sleep(0.01)
+
+
+class GuiApplication(Application):
+    def run(self):
+        super().run()
+
+        win = QApplication([])
+        win.setQuitOnLastWindowClosed(False)
+
+        # Create the icon
+        icon = QIcon('resources/easy.png')
+
+        # Create the tray
+        tray = QSystemTrayIcon()
+        tray.setIcon(icon)
+        tray.setVisible(True)
+
+        # Create the menu
+        menu = QMenu()
+        action = QAction("A menu item")
+        menu.addAction(action)
+
+        # Add a Quit option to the menu.
+        quit = QAction("Quit")
+        quit.triggered.connect(win.quit)
+        menu.addAction(quit)
+
+        # Add the menu to the tray
+        tray.setContextMenu(menu)
+        win.exec_()
