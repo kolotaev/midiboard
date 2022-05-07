@@ -10,11 +10,13 @@ from constants import KEYS_NOTES_MAP
 import utils
 
 
-class Application:
-    def __init__(self):
+class Midiboard():
+    def __init__(self, *args, **kwargs):
+        # super(QSystemTrayIcon, self).__init__(*args, **kwargs)
         self.state = State()
         self.outport = mido.open_output('IAC Driver Virtual cable')
         self.keyboard_listener = None
+        # self.run()
     
     def toggle_enable(self):
         self.state.on = not self.state.on
@@ -109,38 +111,43 @@ class Application:
             print(e)
 
 
-class CliApplication(Application):
+class CliApplication():
     def run(self):
-        super().run()
+        mb = Midiboard()
+        mb.run()
         while True:
             time.sleep(0.01)
 
 
-class GuiApplication(Application):
-    def run(self):
-        super().run()
+class GuiMidiboard(QSystemTrayIcon, Midiboard):
+    def __init__(self, *args, **kwargs):
+        super(QSystemTrayIcon, self).__init__(*args, **kwargs)
+        super(Midiboard, self).__init__(*args, **kwargs)
 
-        win = QApplication([])
-        win.setQuitOnLastWindowClosed(False)
+
+class GuiApplication:
+    def run(self):
+        app = QApplication([])
+        app.setQuitOnLastWindowClosed(False)
 
         # Create the icon
         icon = QIcon('resources/easy.png')
 
         # Create the tray
-        tray = QSystemTrayIcon()
-        tray.setIcon(icon)
-        tray.setVisible(True)
+        midiboard_tray = GuiMidiboard()
+        midiboard_tray.setIcon(icon)
+        midiboard_tray.setVisible(True)
+        midiboard_tray.run()
 
         # Create the menu
         menu = QMenu()
         action = QAction("A menu item")
         menu.addAction(action)
-
         # Add a Quit option to the menu.
         quit = QAction("Quit")
-        quit.triggered.connect(win.quit)
+        quit.triggered.connect(app.quit)
         menu.addAction(quit)
 
         # Add the menu to the tray
-        tray.setContextMenu(menu)
-        win.exec_()
+        midiboard_tray.setContextMenu(menu)
+        app.exec_()
