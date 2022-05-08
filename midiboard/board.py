@@ -1,9 +1,9 @@
 
-from pynput import keyboard
 import mido
+from pynput.keyboard import Key, Listener
 
 from state import State
-from constants import KEYS_NOTES_MAP
+from midimapping import KEYS_NOTES_MAP
 import utils
 
 
@@ -21,16 +21,6 @@ class Midiboard():
         return not self.state.on
 
     def run(self):
-        def restart_listener(suppress):
-            if self.keyboard_listener:
-                self.keyboard_listener.stop()
-            self.keyboard_listener = keyboard.Listener(
-                suppress=suppress,
-                on_press=on_press,
-                on_release=on_release
-            )
-            self.keyboard_listener.start()
-        
         def on_release(key):
             if self.disabled():
                 return
@@ -52,18 +42,18 @@ class Midiboard():
                 print(f'special key {key} released')
 
         def on_press(key):
-            if key == keyboard.Key.esc:
+            if key == Key.esc:
                 self.toggle_enable()
-                restart_listener(suppress=not self.disabled())
             if self.disabled():
                 return
             print(f'{key} pressed')
             # Change octaves
-            if key == keyboard.Key.up:
+            if key == Key.up:
                 self.state.octave += 1
-            elif key == keyboard.Key.down:
+            elif key == Key.down:
                 self.state.octave -= 1
             # Map to notes
+            # ToDo - maybe map to keyboard.Key values
             key_symbol_pressed = str(key)[1:-1]
             base_note = KEYS_NOTES_MAP.get(key_symbol_pressed)
             if base_note is None:
@@ -79,28 +69,26 @@ class Midiboard():
                 self.outport.send(mm)
             except ValueError as e:
                 print(e)
+        
+        def darwin_intercept(event_type, event):
+            try:
+                # hacky private access, but it's better then own implementation
+                key = self.keyboard_listener._event_to_key(event)
+            except IndexError:
+                key = None
+            print(f'-----\ndarwin key {key} pressed\n')
+            if key in (Key.esc, Key.up, Key.down): # Block keys that are not allowed to be passed anyway!
+                return None
+            if not self.disabled() and KEYS_NOTES_MAP.get(str(key)[1:-1]) is not None:
+                return None
+            return event
 
-        try:
-            restart_listener(True)
-            # var = False
-            # import threading
-            # def f():
-            #     import time
-            #     counter = 0
-            #     kbl = keyboard.Listener(
-            #         suppress=True,
-            #         on_press=on_press,
-            #         on_release=on_release
-            #     )
-            #     kbl.start()
-            #     while var:
-            #         time.sleep(0.1)
-            #         print("Function {} run!".format(counter))
-            #         counter+=1
-            # t1 = threading.Thread(target=f)
-            # t1.start()
-
-            print(f'Is App trusted? Answer: {self.keyboard_listener.IS_TRUSTED}')
-            print('Started listening.')
-        except Exception as e:
-            print(e)
+        self.keyboard_listener = Listener(
+            darwin_intercept=darwin_intercept,
+            suppress=True,
+            on_press=on_press,
+            on_release=on_release
+        )
+        print(f'Is App trusted? Answer: {self.keyboard_listener.IS_TRUSTED}')
+        print('Started listening.')
+        self.keyboard_listener.start()
