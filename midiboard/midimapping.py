@@ -21,8 +21,8 @@ KEYS_NOTES_MAP = {
     'k': 65,
     'l': 66,
     ';': 67,
-    '\'': 68,
-    # '\\\\': 70, # needs to be fixed - since is being passed through darwin gateway. probably escaping thing
+    "'": 68,
+    # '\\': 69, # needs to be fixed - since is being passed through darwin gateway. probably escaping thing
     # Third row
     'q': 63,
     'w': 64,
