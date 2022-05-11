@@ -85,7 +85,6 @@ class Midiboard():
 
         self.keyboard_listener = Listener(
             darwin_intercept=darwin_intercept,
-            suppress=True,
             on_press=on_press,
             on_release=on_release
         )
