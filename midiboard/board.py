@@ -77,9 +77,11 @@ class Midiboard():
             except IndexError:
                 key = None
             print(f'-----\ndarwin key {key} pressed\n')
-            if key in (Key.esc, Key.up, Key.down): # Block keys that are not allowed to be passed anyway!
+            if key == Key.esc: # Block esc key anyway for global toggle!
                 return None
-            if not self.disabled() and KEYS_NOTES_MAP.get(str(key)[1:-1]) is not None:
+            if self.disabled():
+                return event
+            if KEYS_NOTES_MAP.get(str(key)[1:-1]) is not None or key in (Key.up, Key.down):
                 return None
             return event
 
