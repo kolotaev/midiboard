@@ -10,7 +10,7 @@ class State:
         self._pressed_keys[key] = True
 
     def remove_pressed_key(self, key):
-        del self._pressed_keys[key]
+        self._pressed_keys.pop(key, None)
 
     def was_key_pressed(self, key):
         return key in self._pressed_keys
