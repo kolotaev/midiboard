@@ -2,9 +2,9 @@
 import mido
 from pynput.keyboard import Key, Listener
 
-from state import State
-from midimapping import KEYS_NOTES_MAP
-import utils
+from .state import State
+from .midimapping import KEYS_NOTES_MAP
+from .utils import octaved_note, rand_velocity
 
 
 class Midiboard():
@@ -33,8 +33,8 @@ class Midiboard():
                     return
                 try:
                     mm = mido.Message('note_off',
-                                note=utils.octaved_note(self.state, note), 
-                                velocity=utils.rand_velocity(), time=6.2)
+                                note=octaved_note(self.state, note), 
+                                velocity=rand_velocity(), time=6.2)
                     self.outport.send(mm)
                 except ValueError as e:
                     print(e)
@@ -58,14 +58,14 @@ class Midiboard():
             base_note = KEYS_NOTES_MAP.get(key_symbol_pressed)
             if base_note is None:
                 return
-            octaved_note = utils.octaved_note(self.state, base_note)
+            oct_note = octaved_note(self.state, base_note)
             if self.state.was_key_pressed(key_symbol_pressed):
                 if self.state.polytouch_on:
-                    self.outport.send(mido.Message('polytouch', note=octaved_note, value=utils.rand_velocity()))
+                    self.outport.send(mido.Message('polytouch', note=oct_note, value=rand_velocity()))
                 return
             self.state.add_pressed_key(key_symbol_pressed)
             try:
-                mm = mido.Message('note_on', note=octaved_note, velocity=utils.rand_velocity(), time=6.2)
+                mm = mido.Message('note_on', note=oct_note, velocity=rand_velocity(), time=6.2)
                 self.outport.send(mm)
             except ValueError as e:
                 print(e)

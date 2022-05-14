@@ -1,9 +1,10 @@
 import time
 
+import mido
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from board import Midiboard
+from .board import Midiboard
 
 
 class CliApplication():
@@ -26,7 +27,8 @@ class GuiApplication:
         app.setQuitOnLastWindowClosed(False)
 
         # Create the icon
-        icon = QIcon('resources/easy.png')
+        # icon = QIcon('resources/easy.png')
+        icon = QIcon()
 
         # Create the tray
         midiboard_tray = GuiMidiboard()
@@ -46,3 +48,27 @@ class GuiApplication:
         # Add the menu to the tray
         midiboard_tray.setContextMenu(menu)
         app.exec_()
+
+
+def exec(cli=False):
+    import sys
+    # Store the reference of original standard output into variable
+    original_stdout = sys.stdout 
+    # Create or open an existing file in write mode
+    with open('/Users/Egor/Downloads/Midiboard-log.txt', 'w') as file:
+        # Set the stdout to file object
+        sys.stdout = file
+        print('File Mode: Print text to a file.')    
+    # Set the stdout back to the original or default mode
+    # sys.stdout = original_stdout
+        try:
+            outs = mido.get_output_names()
+            print(outs)
+            if cli:
+                a = CliApplication()
+            else:
+                a = GuiApplication()
+            print('Starting...')
+            a.run()
+        except Exception as e:
+            print(e)

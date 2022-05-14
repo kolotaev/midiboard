@@ -1,19 +1,12 @@
-from os import path
 from setuptools import setup, find_packages
-
-
-info = {}
-here = path.abspath(path.dirname(__file__))
-with open(path.join(here, 'midiboard', 'info.py'), mode='r') as f:
-    exec(f.read(), info)
 
 
 if __name__ == '__main__':
     setup(
-        name=info['NAME'],
+        name='midiboard',
         description='',
         # keywords='',
-        version=info['VERSION'],
+        version='0.1',
         author='',
         author_email='',
         license='MIT',
@@ -35,8 +28,11 @@ if __name__ == '__main__':
         extras_require={
             'dev': [
                 'pytest>=4.6',
+                'pyinstaller==5.5'
             ],
         },
+        # packages=['midiboard'],
+        include_package_data=True,
         packages=find_packages(exclude='tests'),
         classifiers=[
             'Natural Language :: English',
