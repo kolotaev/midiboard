@@ -28,7 +28,7 @@ if __name__ == '__main__':
         extras_require={
             'dev': [
                 'pytest>=4.6',
-                'pyinstaller==5.5'
+                # 'pyinstaller==5.5'
             ],
         },
         # packages=['midiboard'],
