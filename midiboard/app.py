@@ -37,8 +37,15 @@ class GuiApplication:
 
         # Create the menu
         menu = QMenu()
-        action = QAction("A menu item")
-        menu.addAction(action)
+        # Random velocity button
+        random_vel = QAction("Random vel", checkable=True)
+        random_vel.setChecked(midiboard_tray.state.rand_velocity_enabled)
+        # ToDo - redo with signals and slots (+ state reader-only access)
+        def on_triggered():
+            midiboard_tray.state.rand_velocity_enabled = not midiboard_tray.state.rand_velocity_enabled
+            random_vel.setChecked(midiboard_tray.state.rand_velocity_enabled)
+        random_vel.triggered.connect(on_triggered)
+        menu.addAction(random_vel)
         # Add a Quit option to the menu.
         quit = QAction("Quit")
         quit.triggered.connect(app.quit)
