@@ -52,9 +52,8 @@ class GuiApplication:
 def exec(cli=False):
     outs = mido.get_output_names()
     print(outs)
-    if cli:
-        a = CliApplication()
-    else:
-        a = GuiApplication()
     print('Starting...')
-    a.run()
+    if cli:
+        CliApplication().run()
+    else:
+        GuiApplication().run()
