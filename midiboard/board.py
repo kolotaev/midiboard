@@ -4,12 +4,14 @@ from pynput.keyboard import Key, Listener
 
 from .state import State
 from .midimapping import KEYS_NOTES_MAP
-from .utils import octaved_note, rand_velocity
+from .utils import octaved_note
+from .generators import VelocityGenerator
 
 
 class Midiboard():
     def __init__(self, *args, **kwargs):
         self.state = State()
+        self.velocity_gen = VelocityGenerator(self.state)
         self.outport = mido.open_output('IAC Driver Virtual cable')
         self.keyboard_listener = None
     
@@ -34,7 +36,8 @@ class Midiboard():
                 try:
                     mm = mido.Message('note_off',
                                 note=octaved_note(self.state, note), 
-                                velocity=rand_velocity(), time=6.2)
+                                velocity=self.velocity_gen.velocity(),
+                                time=6.2)
                     self.outport.send(mm)
                 except ValueError as e:
                     print(e)
@@ -61,11 +64,14 @@ class Midiboard():
             oct_note = octaved_note(self.state, base_note)
             if self.state.was_key_pressed(key_symbol_pressed):
                 if self.state.polytouch_on:
-                    self.outport.send(mido.Message('polytouch', note=oct_note, value=rand_velocity()))
+                    self.outport.send(mido.Message('polytouch', note=oct_note, value=self.velocity_gen.velocity()))
                 return
             self.state.add_pressed_key(key_symbol_pressed)
             try:
-                mm = mido.Message('note_on', note=oct_note, velocity=rand_velocity(), time=6.2)
+                mm = mido.Message('note_on',
+                                  note=oct_note,
+                                  velocity=self.velocity_gen.velocity(),
+                                  time=6.2)
                 self.outport.send(mm)
             except ValueError as e:
                 print(e)

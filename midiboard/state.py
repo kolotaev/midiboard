@@ -5,6 +5,8 @@ class State:
         # todo - move to config
         self.octave = 0
         self.polytouch_on = True
+        self.rand_polytouch_enabled = True
+        self.rand_velocity_enabled = False
 
     def add_pressed_key(self, key):
         self._pressed_keys[key] = True
