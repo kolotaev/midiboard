@@ -5,13 +5,14 @@ from pynput.keyboard import Key, Listener
 from .state import State
 from .midimapping import KEYS_NOTES_MAP
 from .utils import octaved_note
-from .generators import VelocityGenerator
+from .generators import VelocityGenerator, PolyTouchGenerator
 
 
 class Midiboard():
     def __init__(self, *args, **kwargs):
         self.state = State()
         self.velocity_gen = VelocityGenerator(self.state)
+        self.poly_touch_gen = PolyTouchGenerator(self.state)
         self.outport = mido.open_output('IAC Driver Virtual cable')
         self.keyboard_listener = None
     
@@ -64,7 +65,7 @@ class Midiboard():
             oct_note = octaved_note(self.state, base_note)
             if self.state.was_key_pressed(key_symbol_pressed):
                 if self.state.polytouch_on:
-                    self.outport.send(mido.Message('polytouch', note=oct_note, value=self.velocity_gen.velocity()))
+                    self.outport.send(mido.Message('polytouch', note=oct_note, value=self.poly_touch_gen.value()))
                 return
             self.state.add_pressed_key(key_symbol_pressed)
             try:
