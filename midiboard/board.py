@@ -15,11 +15,11 @@ class Midiboard():
         self.poly_touch_gen = PolyTouchGenerator(self.state)
         self.outport = mido.open_output('IAC Driver Bus 1')
         self.keyboard_listener = None
-    
+
     def toggle_enable(self):
         self.state.on = not self.state.on
         print(f'App is enabled: {self.state.on}')
-    
+
     def disabled(self):
         return not self.state.on
 
@@ -36,7 +36,7 @@ class Midiboard():
                     return
                 try:
                     mm = mido.Message('note_off',
-                                note=octaved_note(self.state, note), 
+                                note=octaved_note(self.state, note),
                                 velocity=self.velocity_gen.velocity(),
                                 time=6.2)
                     self.outport.send(mm)
@@ -66,17 +66,19 @@ class Midiboard():
             if self.state.was_key_pressed(key_symbol_pressed):
                 if self.state.polytouch_on:
                     self.outport.send(mido.Message('polytouch', note=oct_note, value=self.poly_touch_gen.value()))
+                elif self.state.aftertouch_on:
+                    # Todo - use a dedicated generator
+                    self.outport.send(mido.Message('aftertouch', value=self.poly_touch_gen.value()))
                 return
             self.state.add_pressed_key(key_symbol_pressed)
             try:
                 mm = mido.Message('note_on',
                                   note=oct_note,
-                                  velocity=self.velocity_gen.velocity(),
-                                  time=6.2)
+                                  velocity=self.velocity_gen.velocity())
                 self.outport.send(mm)
             except ValueError as e:
                 print(e)
-        
+
         def darwin_intercept(event_type, event):
             try:
                 # hacky private access, but it's better then own implementation

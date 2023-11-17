@@ -55,6 +55,16 @@ class GuiApplication:
             poly_touch.setChecked(midiboard_tray.state.polytouch_on)
         poly_touch.triggered.connect(on_poly_touch_check)
         menu.addAction(poly_touch)
+        # Aftertouch button
+        # ToDo - redo with signals and slots (+ state reader-only access)
+        # Make it mutually exclusive with poly-touch
+        after_touch = QAction("Aftertouch", checkable=True)
+        after_touch.setChecked(midiboard_tray.state.aftertouch_on)
+        def on_after_touch_check():
+            midiboard_tray.state.aftertouch_on = not midiboard_tray.state.polytouch_on
+            after_touch.setChecked(midiboard_tray.state.aftertouch_on)
+        after_touch.triggered.connect(on_after_touch_check)
+        menu.addAction(after_touch)
         # Add a Quit option to the menu.
         quit = QAction("Quit")
         quit.triggered.connect(app.quit)

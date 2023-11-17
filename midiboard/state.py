@@ -6,6 +6,7 @@ class State:
         self.octave = 0
         self.rand_velocity_enabled = True
         self.polytouch_on = True
+        self.aftertouch_on = False
         self.rand_polytouch_enabled = True # not configurable right now
 
     def add_pressed_key(self, key):
