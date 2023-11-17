@@ -13,7 +13,7 @@ class Midiboard():
         self.state = State()
         self.velocity_gen = VelocityGenerator(self.state)
         self.poly_touch_gen = PolyTouchGenerator(self.state)
-        self.outport = mido.open_output('IAC Driver Virtual cable')
+        self.outport = mido.open_output('IAC Driver Bus 1')
         self.keyboard_listener = None
     
     def toggle_enable(self):

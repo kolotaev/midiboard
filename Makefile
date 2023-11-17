@@ -10,6 +10,7 @@ run-cli:
 	$(VENV_ACTIVATE) && python main.py cli
 
 deps:
+	$(VENV_ACTIVATE) && pip3 install --upgrade pip
 	$(VENV_ACTIVATE) && pip install -r requirements-macos.txt
 
 # install:

@@ -23,7 +23,7 @@ if __name__ == '__main__':
             'pynput~=1.7',
             'mido~=1.2',
             'python-rtmidi',
-            'PyQt5~=5.15',
+            'PyQt5~=6.5',
         ],
         extras_require={
             'dev': [

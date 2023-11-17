@@ -1,8 +1,8 @@
 import time
 
 import mido
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
 
 from .board import Midiboard
 
@@ -62,7 +62,7 @@ class GuiApplication:
 
         # Add the menu to the tray
         midiboard_tray.setContextMenu(menu)
-        app.exec_()
+        app.exec()
 
 
 def exec(cli=False):

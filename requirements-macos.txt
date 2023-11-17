@@ -6,4 +6,4 @@ pyobjc-framework-Cocoa==8.1
 pyobjc-framework-Quartz==8.1
 python-rtmidi==1.4.9
 six==1.16.0
-PyQt5==5.15.7
+PyQt6==6.5.1
